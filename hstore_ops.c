@@ -64,7 +64,7 @@ get_entry_hash(HEntry *hsent, char *ptr, int i)
 
 	result |= (uint64) tag_hash(HS_KEY(hsent, ptr, i), HS_KEYLEN(hsent, i)) << 32;
 
-	if (HS_VALISNULL(hsent, i))
+	if (!HS_VALISNULL(hsent, i))
 		result |= (uint64) tag_hash(HS_VAL(hsent, ptr, i), HS_VALLEN(hsent, i));
 
 	return result;
