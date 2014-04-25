@@ -194,6 +194,9 @@ gin_consistent_hstore_hash(PG_FUNCTION_ARGS)
 	bool		res = true;
 	int32		i;
 
+	/* All cases are inexact because of hashing */
+	*recheck = true;
+
 	if (strategy == HStoreContainsStrategyNumber)
 	{
 		/*
@@ -201,7 +204,6 @@ gin_consistent_hstore_hash(PG_FUNCTION_ARGS)
 		 * values, so we need recheck.	However, if not all the keys are
 		 * present, we can fail at once.
 		 */
-		*recheck = true;
 		for (i = 0; i < nkeys; i++)
 		{
 			if (!check[i])
@@ -213,20 +215,14 @@ gin_consistent_hstore_hash(PG_FUNCTION_ARGS)
 	}
 	else if (strategy == HStoreExistsStrategyNumber)
 	{
-		/* Existence of key is guaranteed in default search mode */
-		*recheck = false;
 		res = true;
 	}
 	else if (strategy == HStoreExistsAnyStrategyNumber)
 	{
-		/* Existence of key is guaranteed in default search mode */
-		*recheck = false;
 		res = true;
 	}
 	else if (strategy == HStoreExistsAllStrategyNumber)
 	{
-		/* Testing for all the keys being present gives an exact result */
-		*recheck = false;
 		for (i = 0; i < nkeys; i++)
 		{
 			if (!check[i])
