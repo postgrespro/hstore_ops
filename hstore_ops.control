@@ -1,0 +1,6 @@
+# hstore_ops extension
+comment = 'extra operator class for hstore extension'
+default_version = '1.0'
+module_pathname = '$libdir/hstore_ops'
+relocatable = true
+requires = 'hstore'

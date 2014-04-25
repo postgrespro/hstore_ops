@@ -1,0 +1,43 @@
+CREATE EXTENSION hstore;
+CREATE EXTENSION hstore_ops;
+set escape_string_warning=off;
+CREATE TABLE testhstore (h hstore);
+\copy testhstore from 'data/hstore.data'
+create index hidx on testhstore using gin(h gin_hstore_hash_ops);
+set enable_seqscan=off;
+select count(*) from testhstore where h @> 'wait=>NULL';
+ count 
+-------
+     1
+(1 row)
+
+select count(*) from testhstore where h @> 'wait=>CC';
+ count 
+-------
+    15
+(1 row)
+
+select count(*) from testhstore where h @> 'wait=>CC, public=>t';
+ count 
+-------
+     2
+(1 row)
+
+select count(*) from testhstore where h ? 'public';
+ count 
+-------
+   194
+(1 row)
+
+select count(*) from testhstore where h ?| ARRAY['public','disabled'];
+ count 
+-------
+   337
+(1 row)
+
+select count(*) from testhstore where h ?& ARRAY['public','disabled'];
+ count 
+-------
+    42
+(1 row)
+
