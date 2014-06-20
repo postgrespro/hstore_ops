@@ -1,5 +1,18 @@
-/*
- * contrib/hstore/hstore_gin.c
+/*-------------------------------------------------------------------------
+ *
+ * hstore_ops.c
+ *     Definitions of gin_hstore_hash_ops operator class for hstore.
+ *
+ * Copyright (c) 2014, PostgreSQL Global Development Group
+ * Author: Alexander Korotkov <aekorotkov@gmail.com>
+ *
+ * IDENTIFICATION
+ *    contrib/hstore_ops/hstore_ops.c
+ *
+ * GIN keys in this opclass are 64-bit integers where higher 32-bits are hash
+ * of hstore key and lower 32-bits are hash of hstore value.
+ *
+ *-------------------------------------------------------------------------
  */
 #include "postgres.h"
 
@@ -15,6 +28,10 @@ PG_MODULE_MAGIC;
 PG_FUNCTION_INFO_V1(gin_compare_hstore_hash);
 Datum		gin_compare_hstore_hash(PG_FUNCTION_ARGS);
 
+/*
+ * GIN comparison function: compare keys as _unsigned_ 64-bit integers. So, keys
+ * with same higher 32-bits will be together.
+ */
 Datum
 gin_compare_hstore_hash(PG_FUNCTION_ARGS)
 {
@@ -35,6 +52,9 @@ gin_compare_hstore_hash(PG_FUNCTION_ARGS)
 PG_FUNCTION_INFO_V1(gin_compare_partial_hstore_hash);
 Datum		gin_compare_partial_hstore_hash(PG_FUNCTION_ARGS);
 
+/*
+ * GIN comparison function: select GIN keys with same hash of hstore key.
+ */
 Datum
 gin_compare_partial_hstore_hash(PG_FUNCTION_ARGS)
 {
@@ -57,6 +77,9 @@ gin_compare_partial_hstore_hash(PG_FUNCTION_ARGS)
 	PG_RETURN_INT32(result);
 }
 
+/*
+ * Get hashed representation of key-value pair.
+ */
 static uint64
 get_entry_hash(HEntry *hsent, char *ptr, int i)
 {
@@ -70,6 +93,9 @@ get_entry_hash(HEntry *hsent, char *ptr, int i)
 	return result;
 }
 
+/*
+ * Get hstore key hash in same format as hash of key-value pair.
+ */
 static uint64
 get_key_hash(text *key)
 {
@@ -83,6 +109,9 @@ get_key_hash(text *key)
 PG_FUNCTION_INFO_V1(gin_extract_hstore_hash);
 Datum		gin_extract_hstore_hash(PG_FUNCTION_ARGS);
 
+/*
+ * Split hstore into hashes of key-value pairs.
+ */
 Datum
 gin_extract_hstore_hash(PG_FUNCTION_ARGS)
 {
@@ -107,6 +136,9 @@ gin_extract_hstore_hash(PG_FUNCTION_ARGS)
 PG_FUNCTION_INFO_V1(gin_extract_hstore_query_hash);
 Datum		gin_extract_hstore_query_hash(PG_FUNCTION_ARGS);
 
+/*
+ * Provide relevant hashes for either hstore, key or array of keys.
+ */
 Datum
 gin_extract_hstore_query_hash(PG_FUNCTION_ARGS)
 {
@@ -118,7 +150,7 @@ gin_extract_hstore_query_hash(PG_FUNCTION_ARGS)
 
 	if (strategy == HStoreContainsStrategyNumber)
 	{
-		/* Query is an hstore, so just apply gin_extract_hstore... */
+		/* Query is an hstore, so just apply gin_extract_hstore_hash... */
 		entries = (Datum *)
 			DatumGetPointer(DirectFunctionCall2(gin_extract_hstore_hash,
 												PG_GETARG_DATUM(0),
@@ -180,6 +212,9 @@ gin_extract_hstore_query_hash(PG_FUNCTION_ARGS)
 PG_FUNCTION_INFO_V1(gin_consistent_hstore_hash);
 Datum		gin_consistent_hstore_hash(PG_FUNCTION_ARGS);
 
+/*
+ * Consistent
+ */
 Datum
 gin_consistent_hstore_hash(PG_FUNCTION_ARGS)
 {
