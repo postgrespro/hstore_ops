@@ -4,7 +4,7 @@ MODULE_big = hstore_ops
 OBJS = hstore_compat.o hstore_ops.o
 
 EXTENSION = hstore_ops
-DATA = hstore_ops--1.0.sql
+DATA = hstore_ops--1.1.sql hstore_ops--1.0--1.1.sql
 
 REGRESS = hstore_ops
 
