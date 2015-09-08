@@ -36,7 +36,7 @@ Downloads
 ---------
 
     Stable version of hstore_ops is available from
-    https://github.com/akorotkov/hstore_ops
+    https://github.com/postgrespro/hstore_ops
 
 Installation
 ------------
@@ -51,7 +51,7 @@ To build and install it you should ensure in following:
     
 Typical installation procedure may look like this:
     
-    $ git clone https://github.com/akorotkov/hstore_ops.git
+    $ git clone https://github.com/postgrespro/hstore_ops.git
     $ cd hstore_ops
     $ make USE_PGXS=1
     $ sudo make USE_PGXS=1 install
