@@ -19,6 +19,9 @@
 #include "access/gin.h"
 #include "access/skey.h"
 #include "catalog/pg_type.h"
+#if PG_VERSION_NUM >= 130000
+#include "common/hashfn.h"
+#endif
 #include "utils/hsearch.h"
 
 #include "hstore.h"
